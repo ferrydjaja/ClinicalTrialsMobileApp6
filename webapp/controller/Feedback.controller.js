@@ -71,7 +71,7 @@ sap.ui.define([
                     cache: true,
                     timeout: 600000, 
                     dataType: "json",
-                    url: "https://erpdevapi.apimanagement.us3.hana.ondemand.com:443/clinicalnodejs?q=3&cond=" + searchkey,
+                    url: "https://erpdevapi.apimanagement.us3.hana.ondemand.com/clinicalnodejs?q=3&cond=" + searchkey,
                     contentType: 'application/json; charset=utf-8',
                     success: function(data) {
                         var arSearch = [];
