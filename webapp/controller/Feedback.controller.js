@@ -25,7 +25,7 @@ sap.ui.define([
             /*this below code for get the JSON Model form Manifest.json file*/
 			this.oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 
-            var oModelCountry = this.getOwnerComponent().getModel("CountryModel");
+        	var oModelCountry = this.getOwnerComponent().getModel("CountryModel");
             oModelCountry.setSizeLimit(250);
             this.getView().byId("selectCountryAS").setModel(oModelCountry);
 
@@ -71,7 +71,7 @@ sap.ui.define([
                     cache: true,
                     timeout: 600000, 
                     dataType: "json",
-                    url: "/nodejs?q=3&cond=" + searchkey,
+                    url: "https://erpdevapi.apimanagement.us3.hana.ondemand.com:443/clinicalnodejs?q=3&cond=" + searchkey,
                     contentType: 'application/json; charset=utf-8',
                     success: function(data) {
                         var arSearch = [];
@@ -111,7 +111,6 @@ sap.ui.define([
             });
                     
             this.getView().setModel(oImageModel, "imageModel");
-
         },
 
 
@@ -144,29 +143,51 @@ sap.ui.define([
 		},
 
 		
-        onButtonPress1: function(oEvent) {
+        onButtonPress: function(oEvent) {
             navigator.geolocation.getCurrentPosition(this.onGeoSuccess.bind(this), this.onGeoError.bind(this), {
                 enableHighAccuracy: true, timeout: 2000, maximumAge: 0
             });
         },
 
 
-        //onGeoSuccess: function(position) {
-        onButtonPress: function() {
-            var lat = '';
-            var lng = '';
-
-            //var lat = position.coords.latitude;
-            //var lng = position.coords.longitude;
-            //var alt = position.coords.altitude;
+        onGeoSuccess: function(position) {
+            var lat = position.coords.latitude;
+            var lng = position.coords.longitude;
+            var alt = position.coords.altitude;
 
             this.onProcess(lat, lng);
         },
 
-        onGeoError: function() {
-            var lat = '';
-            var lng = '';
-            this.onProcess(lat, lng);
+       onGeoError: function() {
+            //cordova.plugins.diagnostic.switchToLocationSettings();
+            
+            var this_ = this;
+            
+            cordova.plugins.locationAccuracy.canRequest(function(canRequest){
+			    if(canRequest){
+			        cordova.plugins.locationAccuracy.request(function (success){
+			            console.log("Successfully requested accuracy: "+success.message);
+			            
+			             navigator.geolocation.getCurrentPosition(this_.onGeoSuccess.bind(this_), this_.onGeoError.bind(this_), {
+			                enableHighAccuracy: true, timeout: 2000, maximumAge: 0
+			            });
+            
+			        }, function (error){
+			           console.error("Accuracy request failed: error code="+error.code+"; error message="+error.message);
+			           if(error.code !== cordova.plugins.locationAccuracy.ERROR_USER_DISAGREED){
+			               if(window.confirm("Failed to automatically set Location Mode to 'High Accuracy'. Would you like to switch to the Location Settings page and do this manually?")){
+			                   cordova.plugins.diagnostic.switchToLocationSettings();
+			               }
+			           } else {
+			           		this_.onProcess('', '');
+			           }
+			        }, cordova.plugins.locationAccuracy.REQUEST_PRIORITY_HIGH_ACCURACY);
+			    }else{
+			        // request location permission and try again
+			    }
+			});
+
+            //this.onProcess(lat, lng);
         },
 
         onProcess: function(lat, lng) {
@@ -182,7 +203,7 @@ sap.ui.define([
             function runNext() {
                 busyDialog.close();
             }
-
+            
             function toTitleCase(str) {
                 return str.replace(/\w\S*/g, function(txt){
                     return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
@@ -217,7 +238,7 @@ sap.ui.define([
                     dataType: "json",
                     timeout: 600000, 
                     contentType: "application/json; charset=utf-8",
-                    url: "/nodejs?q=1&cond=" + cond + "&cntry=" + cntry + "&state=" + state + "&city=" + city + "&recrs=" + recrs + "&gndr=" + gndr + "&age=" + age + "&dist=" + dist + "&lat=" + lat + "&lng=" + lng,
+                    url: "https://erpdevapi.apimanagement.us3.hana.ondemand.com/clinicalnodejs?q=1&cond=" + cond + "&cntry=" + cntry + "&state=" + state + "&city=" + city + "&recrs=" + recrs + "&gndr=" + gndr + "&age=" + age + "&dist=" + dist + "&lat=" + lat + "&lng=" + lng,
                     success: function(data) {
                         console.log(data);
 
