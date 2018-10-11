@@ -246,12 +246,10 @@ sap.ui.define(["sap/ui/core/mvc/Controller", './Formatter',], function(Controlle
                 type: 'GET',
                 async: true,
                 cache: true,
-                url: "/nodejs?q=2&nctid=" + nct_id + "&lat=" + lat + "&lng=" + lng,
+                url: "https://erpdevapi.apimanagement.us3.hana.ondemand.com/clinicalnodejs?q=2&nctid=" + nct_id + "&lat=" + lat + "&lng=" + lng,
                 timeout: 600000, 
                 dataType: "json",
                 contentType: "application/json; charset=utf-8",
-                //url: "/nodejs?q=2&nctid=NCT01689584",
-                //url: "http://10.44.136.115/nodejs?q=2&nctid=" + nct_id,
 
                 success: function(data) {
                     if (data.results.length > 0) {
