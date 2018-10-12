@@ -177,6 +177,8 @@ sap.ui.define([
 			           if(error.code !== cordova.plugins.locationAccuracy.ERROR_USER_DISAGREED){
 			               if(window.confirm("Failed to automatically set Location Mode to 'High Accuracy'. Would you like to switch to the Location Settings page and do this manually?")){
 			                   cordova.plugins.diagnostic.switchToLocationSettings();
+			               } else {
+			            	   this_.onProcess('', '');
 			               }
 			           } else {
 			           		this_.onProcess('', '');
